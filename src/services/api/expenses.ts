@@ -5,7 +5,10 @@ export const expenseService = {
   async getAll(): Promise<Expense[]> {
     const { data, error } = await supabase
       .from('expenses')
-      .select('*, categories(*)')
+      .select(`
+        *,
+        category:categories(*)
+      `)
       .order('date', { ascending: false });
     
     if (error) throw error;
@@ -16,7 +19,10 @@ export const expenseService = {
     const { data, error } = await supabase
       .from('expenses')
       .insert(expense)
-      .select('*, categories(*)')
+      .select(`
+        *,
+        category:categories(*)
+      `)
       .single();
     
     if (error) throw error;
@@ -28,7 +34,10 @@ export const expenseService = {
       .from('expenses')
       .update(expense)
       .eq('id', id)
-      .select('*, categories(*)')
+      .select(`
+        *,
+        category:categories(*)
+      `)
       .single();
     
     if (error) throw error;
@@ -47,7 +56,10 @@ export const expenseService = {
   async getByDateRange(startDate: string, endDate: string): Promise<Expense[]> {
     const { data, error } = await supabase
       .from('expenses')
-      .select('*, categories(*)')
+      .select(`
+        *,
+        category:categories(*)
+      `)
       .gte('date', startDate)
       .lte('date', endDate)
       .order('date', { ascending: false });

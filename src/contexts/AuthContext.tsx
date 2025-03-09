@@ -19,17 +19,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      if (session?.user) {
+        setUser({
+          ...session.user,
+          email: session.user.email || ''
+        } as AuthUser);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      if (session?.user) {
+        setUser({
+          ...session.user,
+          email: session.user.email || ''
+        } as AuthUser);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 

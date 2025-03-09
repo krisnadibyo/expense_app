@@ -22,7 +22,7 @@ CREATE TABLE categories (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Expenses table
+-- Expenses table with proper foreign key reference
 CREATE TABLE expenses (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -59,7 +59,7 @@ CREATE TABLE ai_chat_history (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Row Level Security Policies
+-- Enable Row Level Security
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE expenses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;

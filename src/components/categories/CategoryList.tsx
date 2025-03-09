@@ -11,21 +11,20 @@ interface CategoryListProps {
   selectedCategory?: Category | null;
 }
 
-export function CategoryList({ categories, onSelect, onEdit, onDelete, selectedCategory }: CategoryListProps) {
+export function CategoryList({
+  categories,
+  onSelect,
+  onEdit,
+  onDelete,
+  selectedCategory,
+}: CategoryListProps) {
   const theme = useTheme();
 
   const renderItem = ({ item: category }: { item: Category }) => (
     <List.Item
       title={category.name}
-      left={props => (
-        <Icon
-          name={category.icon || 'tag'}
-          size={24}
-          color={category.color}
-          {...props}
-        />
-      )}
-      right={props => (
+      left={(props) => <Icon name={"tag"} size={24} color={category.color} {...props} />}
+      right={(props) =>
         onEdit && onDelete ? (
           <View style={styles.actions}>
             <Icon
@@ -43,12 +42,9 @@ export function CategoryList({ categories, onSelect, onEdit, onDelete, selectedC
             />
           </View>
         ) : null
-      )}
+      }
       onPress={() => onSelect?.(category)}
-      style={[
-        styles.listItem,
-        selectedCategory?.id === category.id && styles.selectedItem
-      ]}
+      style={[styles.listItem, selectedCategory?.id === category.id && styles.selectedItem]}
     />
   );
 
@@ -56,8 +52,7 @@ export function CategoryList({ categories, onSelect, onEdit, onDelete, selectedC
     <FlatList
       data={categories}
       renderItem={renderItem}
-      keyExtractor={item => item.id}
-      ItemSeparatorComponent={() => <List.Divider />}
+      keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContent}
     />
   );
@@ -80,4 +75,4 @@ const styles = StyleSheet.create({
   actionIcon: {
     marginRight: 16,
   },
-}); 
+});

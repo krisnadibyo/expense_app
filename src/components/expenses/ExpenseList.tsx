@@ -30,9 +30,9 @@ export function ExpenseList({ expenses, onSelect, onEdit, onDelete }: ExpenseLis
       description={formatDate(expense.date)}
       left={props => (
         <Icon
-          name={expense.category?.icon || 'cash'}
+          name={'cash'}
           size={24}
-          color={expense.category?.color || theme.colors.primary}
+          color={theme.colors.primary}
           {...props}
         />
       )}
@@ -69,7 +69,6 @@ export function ExpenseList({ expenses, onSelect, onEdit, onDelete }: ExpenseLis
       data={expenses}
       renderItem={renderItem}
       keyExtractor={item => item.id}
-      ItemSeparatorComponent={() => <List.Divider />}
     />
   );
 }
