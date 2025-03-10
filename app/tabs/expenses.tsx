@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { FAB, Portal, Modal, useTheme } from 'react-native-paper';
+import { FAB, Portal, Modal, useTheme, Snackbar, Text, Button } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { ExpenseList } from '../../src/components/expenses/ExpenseList';
 import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
@@ -14,20 +14,22 @@ export default function ExpensesScreen() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const theme = useTheme();
 
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [expensesData, categoriesData] = await Promise.all([
         expenseService.getAll(),
         categoryService.getAll(),
       ]);
       setExpenses(expensesData);
       setCategories(categoriesData);
-    } catch (error) {
-      console.error('Error loading data:', error);
-      // TODO: Show error toast
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error loading data:', err);
     } finally {
       setLoading(false);
     }
@@ -41,35 +43,38 @@ export default function ExpensesScreen() {
 
   const handleCreate = async (values: Partial<Expense>) => {
     try {
+      setError(null);
       await expenseService.create(values);
       setModalVisible(false);
       loadData();
-    } catch (error) {
-      console.error('Error creating expense:', error);
-      // TODO: Show error toast
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error creating expense:', err);
     }
   };
 
   const handleUpdate = async (values: Partial<Expense>) => {
     if (!editingExpense) return;
     try {
+      setError(null);
       await expenseService.update(editingExpense.id, values);
       setModalVisible(false);
       setEditingExpense(null);
       loadData();
-    } catch (error) {
-      console.error('Error updating expense:', error);
-      // TODO: Show error toast
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error updating expense:', err);
     }
   };
 
   const handleDelete = async (expense: Expense) => {
     try {
+      setError(null);
       await expenseService.delete(expense.id);
       loadData();
-    } catch (error) {
-      console.error('Error deleting expense:', error);
-      // TODO: Show error toast
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error deleting expense:', err);
     }
   };
 
@@ -78,13 +83,30 @@ export default function ExpensesScreen() {
     setModalVisible(true);
   };
 
+  const dismissError = () => {
+    setError(null);
+  };
+
   return (
     <View style={styles.container}>
-      <ExpenseList
-        expenses={expenses}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {loading ? (
+        <View style={styles.centerContainer}>
+          <Text>Loading expenses...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <Button mode="contained" onPress={loadData} style={styles.retryButton}>
+            Retry
+          </Button>
+        </View>
+      ) : expenses.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Text>No expenses found. Add your first expense!</Text>
+        </View>
+      ) : (
+        <ExpenseList expenses={expenses} onEdit={handleEdit} onDelete={handleDelete} />
+      )}
 
       <Portal>
         <Modal
@@ -112,6 +134,17 @@ export default function ExpensesScreen() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         onPress={() => setModalVisible(true)}
       />
+
+      <Snackbar
+        visible={!!error}
+        onDismiss={dismissError}
+        action={{
+          label: 'Dismiss',
+          onPress: dismissError,
+        }}
+      >
+        {error}
+      </Snackbar>
     </View>
   );
 }
@@ -119,6 +152,20 @@ export default function ExpensesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: 8,
   },
   modal: {
     backgroundColor: 'white',
@@ -131,4 +178,4 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-}); 
+});
