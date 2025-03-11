@@ -4,12 +4,15 @@
  */
 export const isConnected = async (): Promise<boolean> => {
   try {
-    // Try to fetch a small resource to check connectivity
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     const response = await fetch('https://www.google.com', {
       method: 'HEAD',
-      // Short timeout to avoid hanging
-      signal: AbortSignal.timeout(5000),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
     return response.ok;
   } catch (error) {
     console.error('Network check failed:', error);

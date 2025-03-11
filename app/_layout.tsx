@@ -9,8 +9,8 @@ function RootLayoutNav() {
 
   return (
     <Stack>
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="login" options={{ headerShown: false, title: 'Login' }} />
+      <Stack.Screen name="home" options={{ headerShown: false, title: 'Home' }} />
     </Stack>
   );
 }
