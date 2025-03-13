@@ -1,25 +1,22 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useAuth } from '../src/contexts/AuthContext';
 
 export default function LoginScreen() {
-  const [identity,  setIdentity] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [identity,  setIdentity] = useState('user_test1');
+  const [password, setPassword] = useState('1234');
   const [error, setError] = useState('');
-  const { signIn } = useAuth();
+  const {signIn, loading } = useAuth();
 
   const handleLogin = async () => {
     try {
-      setLoading(true);
       setError('');
       await signIn(identity, password);
+      router.replace('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -51,7 +48,7 @@ export default function LoginScreen() {
         disabled={loading}
         style={styles.button}
       >
-        Login
+        {loading ? 'Logging in...' : 'Login'} 
       </Button>
 
       <Link href="/register" asChild>

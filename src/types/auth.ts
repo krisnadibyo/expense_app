@@ -1,19 +1,18 @@
-export interface AuthUser {
-  id: string;
-  email: string;
-  created_at: string;
-}
-
-export interface AuthError {
-  message: string;
-}
-
-export interface LoginCredentials {
-  email: string;
+export interface LoginRequest {
+  email?: string | null;
+  wa_number?: string | null;
+  username?: string | null;
   password: string;
 }
 
-export interface RegisterCredentials extends LoginCredentials {
+export interface LoginResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
   confirmPassword: string;
   username: string;
   phone: string;
