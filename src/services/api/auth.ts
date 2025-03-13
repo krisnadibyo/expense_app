@@ -5,7 +5,6 @@ import { RegisterCredentials, RegisterResponse } from "../../types/auth";
 
 export const authService = {
   async signUp(credentials: RegisterCredentials) {
-    console.log(credentials);
     const response = await fetch(`${API_URL}/api/v1/auth/signup`, {
       method: 'POST',
       headers: {
@@ -19,9 +18,8 @@ export const authService = {
       }),
     });
     if (!response.ok) {
-      throw new Error('Failed to sign up');
+      const payload = await response.json();
+      throw new Error(payload.detail);
     }
-    const data: RegisterResponse = await response.json();
-    return data;
   }
 }

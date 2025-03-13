@@ -5,7 +5,7 @@ import { Link } from 'expo-router';
 import { useAuth } from '../src/contexts/AuthContext';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
+  const [identity,  setIdentity] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -15,7 +15,7 @@ export default function LoginScreen() {
     try {
       setLoading(true);
       setError('');
-      await signIn(email, password);
+      await signIn(identity, password);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -30,14 +30,13 @@ export default function LoginScreen() {
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <TextInput
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
+        label="Email/Username/Phone"
+        value={identity}
+        onChangeText={setIdentity}
         autoCapitalize="none"
-        keyboardType="email-address"
+        keyboardType="default"
         style={styles.input}
       />
-
       <TextInput
         label="Password"
         value={password}
@@ -45,7 +44,6 @@ export default function LoginScreen() {
         secureTextEntry
         style={styles.input}
       />
-
       <Button
         mode="contained"
         onPress={handleLogin}

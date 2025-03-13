@@ -10,7 +10,7 @@ type User = {
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (identity: string, password: string) => Promise<void>;
   signUp: (emailInput: string, passwordInput: string, usernameInput: string, phoneInput: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (identity: string, password: string) => {
     try {
       // TODO: Implement your sign in logic here
 
@@ -37,13 +37,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (emailInput: string, passwordInput: string, usernameInput: string, phoneInput: string) => {
     try {
-      // TODO: Implement your sign up logic here
-      const {username, email, wa_number} = await authService.signUp({ email: emailInput, password: passwordInput, username: usernameInput, phone: phoneInput, confirmPassword: passwordInput });
-      setUser({username, email, phone: wa_number});
-      console.log(user);
-
+      await authService.signUp({ email: emailInput, password: passwordInput, username: usernameInput, phone: phoneInput, confirmPassword: passwordInput });   
     } catch (error) {
-      // TODO: Handle error
+      throw error;
     }
   };
 
