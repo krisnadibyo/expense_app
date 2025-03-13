@@ -1,94 +1,42 @@
-import { supabase } from '../supabase';
-import { Category } from '../../types/database';
-import { isConnected, handleNetworkError } from '../../utils/networkUtils';
+import { Category } from '../../types/category';
 
-export const categoryService = {
-  async getAll(): Promise<Category[]> {
-    try {
-      // Check for internet connection first
-      const connected = await isConnected();
-      if (!connected) {
-        throw new Error('No internet connection. Please check your network settings.');
-      }
+// Placeholder for your API implementation
+const api = {
+  async get(endpoint: string) {
+    // TODO: Implement your API GET logic
+    return { data: [] };
+  },
+  async post(endpoint: string, data: any) {
+    // TODO: Implement your API POST logic
+    return { data };
+  },
+  async put(endpoint: string, data: any) {
+    // TODO: Implement your API PUT logic
+    return { data };
+  },
+  async delete(endpoint: string) {
+    // TODO: Implement your API DELETE logic
+    return { success: true };
+  },
+};
 
-      const { data, error } = await supabase.from('categories').select('*').order('name');
-
-      if (error) throw error;
-      return data || [];
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      throw new Error(handleNetworkError(error));
-    }
+export const categoriesService = {
+  async getCategories(): Promise<Category[]> {
+    const { data } = await api.get('/categories');
+    return data || [];
   },
 
-  async create(category: Partial<Category>): Promise<Category> {
-    try {
-      // Check for internet connection first
-      const connected = await isConnected();
-      if (!connected) {
-        throw new Error('No internet connection. Please check your network settings.');
-      }
-
-      // Make sure user_id is set from the current session
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const categoryWithUserId = {
-        ...category,
-        user_id: session?.user?.id,
-      };
-
-      const { data, error } = await supabase
-        .from('categories')
-        .insert(categoryWithUserId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error creating category:', error);
-      throw new Error(handleNetworkError(error));
-    }
+  async createCategory(category: Omit<Category, 'id'>): Promise<Category> {
+    const { data } = await api.post('/categories', category);
+    return data;
   },
 
-  async update(id: string, category: Partial<Category>): Promise<Category> {
-    try {
-      // Check for internet connection first
-      const connected = await isConnected();
-      if (!connected) {
-        throw new Error('No internet connection. Please check your network settings.');
-      }
-
-      const { data, error } = await supabase
-        .from('categories')
-        .update(category)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error updating category:', error);
-      throw new Error(handleNetworkError(error));
-    }
+  async updateCategory(category: Category): Promise<Category> {
+    const { data } = await api.put(`/categories/${category.id}`, category);
+    return data;
   },
 
-  async delete(id: string): Promise<void> {
-    try {
-      // Check for internet connection first
-      const connected = await isConnected();
-      if (!connected) {
-        throw new Error('No internet connection. Please check your network settings.');
-      }
-
-      const { error } = await supabase.from('categories').delete().eq('id', id);
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error deleting category:', error);
-      throw new Error(handleNetworkError(error));
-    }
+  async deleteCategory(id: string): Promise<void> {
+    await api.delete(`/categories/${id}`);
   },
 };

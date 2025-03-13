@@ -1,58 +1,42 @@
-import { supabase } from '../supabase';
-import { Budget } from '../../types/database';
+import { Budget } from '../../types/budget';
 
-export const budgetService = {
-  async getAll(): Promise<Budget[]> {
-    const { data, error } = await supabase
-      .from('budgets')
-      .select('*, categories(*)')
-      .order('start_date', { ascending: false });
-    
-    if (error) throw error;
+// Placeholder for your API implementation
+const api = {
+  async get(endpoint: string) {
+    // TODO: Implement your API GET logic
+    return { data: [] };
+  },
+  async post(endpoint: string, data: any) {
+    // TODO: Implement your API POST logic
+    return { data };
+  },
+  async put(endpoint: string, data: any) {
+    // TODO: Implement your API PUT logic
+    return { data };
+  },
+  async delete(endpoint: string) {
+    // TODO: Implement your API DELETE logic
+    return { success: true };
+  },
+};
+
+export const budgetsService = {
+  async getBudgets(): Promise<Budget[]> {
+    const { data } = await api.get('/budgets');
+    return data || [];
+  },
+
+  async createBudget(budget: Omit<Budget, 'id'>): Promise<Budget> {
+    const { data } = await api.post('/budgets', budget);
     return data;
   },
 
-  async create(budget: Partial<Budget>): Promise<Budget> {
-    const { data, error } = await supabase
-      .from('budgets')
-      .insert(budget)
-      .select('*, categories(*)')
-      .single();
-    
-    if (error) throw error;
+  async updateBudget(budget: Budget): Promise<Budget> {
+    const { data } = await api.put(`/budgets/${budget.id}`, budget);
     return data;
   },
 
-  async update(id: string, budget: Partial<Budget>): Promise<Budget> {
-    const { data, error } = await supabase
-      .from('budgets')
-      .update(budget)
-      .eq('id', id)
-      .select('*, categories(*)')
-      .single();
-    
-    if (error) throw error;
-    return data;
+  async deleteBudget(id: string): Promise<void> {
+    await api.delete(`/budgets/${id}`);
   },
-
-  async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('budgets')
-      .delete()
-      .eq('id', id);
-    
-    if (error) throw error;
-  },
-
-  async getCurrentBudgets(): Promise<Budget[]> {
-    const today = new Date().toISOString().split('T')[0];
-    const { data, error } = await supabase
-      .from('budgets')
-      .select('*, categories(*)')
-      .lte('start_date', today)
-      .or(`end_date.is.null,end_date.gte.${today}`);
-    
-    if (error) throw error;
-    return data;
-  }
-}; 
+};

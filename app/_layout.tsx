@@ -5,11 +5,12 @@ import { AuthProvider } from '../src/contexts/AuthContext';
 import { useProtectedRoute } from '../src/hooks/useProtectedRoute';
 
 function RootLayoutNav() {
-  useProtectedRoute();
+  //useProtectedRoute();
 
   return (
     <Stack>
       <Stack.Screen name="login" options={{ headerShown: false, title: 'Login' }} />
+      <Stack.Screen name="register" options={{ headerShown: false, title: 'Register' }} />
       <Stack.Screen name="home" options={{ headerShown: false, title: 'Home' }} />
     </Stack>
   );

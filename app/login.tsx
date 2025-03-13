@@ -1,28 +1,21 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
-import { Link, router } from 'expo-router';
-import { useAuth } from '../../src/contexts/AuthContext';
+import { Link } from 'expo-router';
+import { useAuth } from '../src/contexts/AuthContext';
 
-export default function RegisterScreen() {
+export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signUp } = useAuth();
+  const { signIn } = useAuth();
 
-  const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
+  const handleLogin = async () => {
     try {
       setLoading(true);
       setError('');
-      await signUp(email, password);
-      router.replace('/login');
+      await signIn(email, password);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -32,7 +25,7 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>Create Account</Text>
+      <Text variant="headlineMedium" style={styles.title}>Welcome Back</Text>
       
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
@@ -53,26 +46,18 @@ export default function RegisterScreen() {
         style={styles.input}
       />
 
-      <TextInput
-        label="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-
       <Button
         mode="contained"
-        onPress={handleRegister}
+        onPress={handleLogin}
         loading={loading}
         disabled={loading}
         style={styles.button}
       >
-        Register
+        Login
       </Button>
 
-      <Link href="/login" asChild>
-        <Button mode="text">Already have an account? Login</Button>
+      <Link href="/register" asChild>
+        <Button mode="text">Don't have an account? Register</Button>
       </Link>
     </View>
   );

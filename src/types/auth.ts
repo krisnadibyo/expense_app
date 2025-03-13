@@ -15,4 +15,12 @@ export interface LoginCredentials {
 
 export interface RegisterCredentials extends LoginCredentials {
   confirmPassword: string;
+  username: string;
+  phone: string;
 } 
+
+export interface RegisterResponse {
+  username: string;
+  email: string;
+  wa_number: string;
+}
