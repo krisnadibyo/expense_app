@@ -4,9 +4,10 @@ import { FAB, Portal, Modal, useTheme, Snackbar, Text, Button } from 'react-nati
 import { useFocusEffect } from '@react-navigation/native';
 import { ExpenseList } from '../../src/components/expenses/ExpenseList';
 import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
-import { expenseService } from '../../src/services/api/expenses';
-import { categoryService } from '../../src/services/api/categories';
-import { Expense, Category } from '../../src/types/database';
+import { Expense } from '../../src/types/expense';
+import { Category } from '../../src/types/category';
+import { expensesService } from '../../src/services/api/expenses';
+import { categoriesService } from '../../src/services/api/categories';
 
 export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -22,8 +23,8 @@ export default function ExpensesScreen() {
       setLoading(true);
       setError(null);
       const [expensesData, categoriesData] = await Promise.all([
-        expenseService.getAll(),
-        categoryService.getAll(),
+        expensesService.getExpenses(),
+        categoriesService.getCategories(),
       ]);
       setExpenses(expensesData);
       setCategories(categoriesData);
@@ -44,7 +45,7 @@ export default function ExpensesScreen() {
   const handleCreate = async (values: Partial<Expense>) => {
     try {
       setError(null);
-      await expenseService.create(values);
+      // await expensesService.createExpense(values);
       setModalVisible(false);
       loadData();
     } catch (err) {
@@ -57,7 +58,7 @@ export default function ExpensesScreen() {
     if (!editingExpense) return;
     try {
       setError(null);
-      await expenseService.update(editingExpense.id, values);
+      // await expensesService.updateExpense(editingExpense.id, values);
       setModalVisible(false);
       setEditingExpense(null);
       loadData();
@@ -70,7 +71,7 @@ export default function ExpensesScreen() {
   const handleDelete = async (expense: Expense) => {
     try {
       setError(null);
-      await expenseService.delete(expense.id);
+      // await expensesService.deleteExpense(expense.id);
       loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -89,7 +90,7 @@ export default function ExpensesScreen() {
 
   return (
     <View style={styles.container}>
-      {loading ? (
+      {/* {loading ? (
         <View style={styles.centerContainer}>
           <Text>Loading expenses...</Text>
         </View>
@@ -105,10 +106,10 @@ export default function ExpensesScreen() {
           <Text>No expenses found. Add your first expense!</Text>
         </View>
       ) : (
-        <ExpenseList expenses={expenses} onEdit={handleEdit} onDelete={handleDelete} />
-      )}
+        // <ExpenseList expenses={expenses} onEdit={handleEdit} onDelete={handleDelete} />
+      )} */}
 
-      <Portal>
+      {/* <Portal>
         <Modal
           visible={modalVisible}
           onDismiss={() => {
@@ -127,7 +128,7 @@ export default function ExpensesScreen() {
             }}
           />
         </Modal>
-      </Portal>
+      </Portal> */}
 
       <FAB
         icon="plus"

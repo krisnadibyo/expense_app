@@ -4,8 +4,8 @@ import { FAB, Portal, Modal, useTheme } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { CategoryList } from '../../src/components/categories/CategoryList';
 import { CategoryForm } from '../../src/components/categories/CategoryForm';
-import { categoryService } from '../../src/services/api/categories';
-import { Category } from '../../src/types/database';
+import { categoriesService } from '../../src/services/api/categories';
+import { Category } from '../../src/types/category';
 
 export default function CategoriesScreen() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -17,7 +17,7 @@ export default function CategoriesScreen() {
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const data = await categoryService.getAll();
+      const data = await categoriesService.getCategories();
       setCategories(data);
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -35,7 +35,7 @@ export default function CategoriesScreen() {
 
   const handleCreate = async (values: Partial<Category>) => {
     try {
-      await categoryService.create(values);
+      // await categoriesService.createCategory(values);
       setModalVisible(false);
       loadCategories();
     } catch (error) {
@@ -47,7 +47,7 @@ export default function CategoriesScreen() {
   const handleUpdate = async (values: Partial<Category>) => {
     if (!editingCategory) return;
     try {
-      await categoryService.update(editingCategory.id, values);
+      // await categoriesService.updateCategory(editingCategory.id, values);
       setModalVisible(false);
       setEditingCategory(null);
       loadCategories();
@@ -59,7 +59,7 @@ export default function CategoriesScreen() {
 
   const handleDelete = async (category: Category) => {
     try {
-      await categoryService.delete(category.id);
+      // await categoriesService.deleteCategory(category.id);
       loadCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
@@ -74,11 +74,11 @@ export default function CategoriesScreen() {
 
   return (
     <View style={styles.container}>
-      <CategoryList
+      {/* <CategoryList
         categories={categories}
         onEdit={handleEdit}
         onDelete={handleDelete}
-      />
+      /> */}
 
       <Portal>
         <Modal

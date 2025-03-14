@@ -3,21 +3,23 @@ import { useRouter, useSegments } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 
 export function useProtectedRoute() {
-  const { user, loading } = useAuth();
+  const {  token, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
     if (loading) return;
 
-    const inAuthGroup = segments[0] === '(auth)';
+    const isLoginRoute = segments[0] === 'login';
+    console.log(segments);
+    console.log(token);
 
-    if (!user && !inAuthGroup) {
+    if (!token && !isLoginRoute) {
       // Redirect to login if user is not authenticated
       router.replace('/login');
-    } else if (user && inAuthGroup) {
+    } else if (token && isLoginRoute) {
       // Redirect to home if user is authenticated and trying to access auth screens
       router.replace('/');
     }
-  }, [user, loading, segments]);
+  }, [token, loading, segments]);
 } 
