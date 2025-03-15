@@ -3,27 +3,35 @@ import { authService } from '../services/api/auth';
 import { isEmail } from '../utils/stringUtils';
 import { isPhoneNumber } from '../utils/stringUtils';
 import { LoginResponse } from '../types/auth';
-
-type Token = {
-  access_token: string;
-};
+import { preferences } from '../services/storage/secureStorage';
 
 type AuthContextType = {
-  token: Token | null;
+  token: string | null;
   loading: boolean;
   signIn: (identity: string, password: string) => Promise<void>;
-  signUp: (emailInput: string, passwordInput: string, usernameInput: string, phoneInput: string) => Promise<void>;
+  signUp: (
+    emailInput: string,
+    passwordInput: string,
+    usernameInput: string,
+    phoneInput: string
+  ) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<Token | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Replace with your authentication logic
+    const fetchToken = async () => {
+      const token_from_storage = await preferences.getValue('token');
+      if (token_from_storage) {
+        setToken(token_from_storage);
+      }
+    };
+    fetchToken();
     setLoading(false);
   }, []);
 
@@ -41,13 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (response) {
-        if (token) {
-          token.access_token = response.access_token;
-        } else {
-          setToken({
-            access_token: response.access_token,
-          });
-        }
+        setToken(response.access_token);
+        await preferences.setValue('token', response.access_token);
       }
     } catch (error) {
       throw error;
@@ -56,10 +59,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (emailInput: string, passwordInput: string, usernameInput: string, phoneInput: string) => {
+  const signUp = async (
+    emailInput: string,
+    passwordInput: string,
+    usernameInput: string,
+    phoneInput: string
+  ) => {
     try {
       setLoading(true);
-      await authService.signUp({ email: emailInput, password: passwordInput, username: usernameInput, phone: phoneInput, confirmPassword: passwordInput });   
+      await authService.signUp({
+        email: emailInput,
+        password: passwordInput,
+        username: usernameInput,
+        phone: phoneInput,
+        confirmPassword: passwordInput,
+      });
     } catch (error) {
       throw error;
     } finally {
@@ -69,9 +83,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // TODO: Implement your sign out logic here
       setLoading(true);
       setToken(null);
+      await preferences.deleteValue('token');
     } catch (error) {
       throw error;
     } finally {
