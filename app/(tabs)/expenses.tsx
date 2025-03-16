@@ -115,7 +115,7 @@ export default function ExpensesScreen() {
           refreshControl={ 
             <RefreshControl refreshing={loading} onRefresh={fetchData} /> }
         >
-          <Text>{dateStart} - {dateEnd}</Text>
+          <Text style={styles.dateRange}>{dateStart} - {dateEnd}</Text>
           <ExpenseList expenses={expenses} onEdit={handleEdit} onDelete={handleDelete} />
         </ScrollView>
 
@@ -164,6 +164,13 @@ export default function ExpensesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  dateRange: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 16,
   },
   centerContainer: {
     flex: 1,

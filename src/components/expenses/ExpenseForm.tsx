@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { TextInput, Button, useTheme, HelperText, Text } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { CategoryList } from '../categories/CategoryList';
 import { Expense } from '../../types/expense';
+import { DatePicker } from '../common/DatePicker';
 
 interface ExpenseFormProps {
   initialValues?: Partial<Expense>;
@@ -71,26 +71,14 @@ export function ExpenseForm({ initialValues, categories, onSubmit, onCancel }: E
         style={styles.input}
       />
 
-      <Button
-        mode="outlined"
-        onPress={() => setShowDatePicker(true)}
-        style={styles.input}
-      >
-        {date.toLocaleDateString()}
-      </Button>
-
-      {showDatePicker && (
-        <DateTimePicker
+      <View style={styles.input}>
+        <DatePicker
           value={date}
-          mode="date"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) {
-              setDate(selectedDate);
-            }
-          }}
+          onChange={setDate}
+          showPicker={showDatePicker}
+          onTogglePicker={() => setShowDatePicker(!showDatePicker)}
         />
-      )}
+      </View>
 
       <Text style={styles.label}>Category</Text>
       <View style={styles.categoryList}>
@@ -107,11 +95,7 @@ export function ExpenseForm({ initialValues, categories, onSubmit, onCancel }: E
       )}
 
       <View style={styles.buttons}>
-        <Button
-          mode="outlined"
-          onPress={onCancel}
-          style={styles.button}
-        >
+        <Button mode="outlined" onPress={onCancel} style={styles.button}>
           Cancel
         </Button>
         <Button
@@ -155,4 +139,4 @@ const styles = StyleSheet.create({
   button: {
     marginLeft: 8,
   },
-}); 
+});
