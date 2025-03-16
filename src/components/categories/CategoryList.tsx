@@ -4,7 +4,6 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 interface CategoryListProps {
   categories: string[];
-  onSelect?: (category: string) => void;
   onEdit?: (category: string) => void;
   onDelete?: (category: string) => void;
   selectedCategory?: string | null;
@@ -12,7 +11,6 @@ interface CategoryListProps {
 
 export function CategoryList({
   categories,
-  onSelect,
   onEdit,
   onDelete,
   selectedCategory,
@@ -42,7 +40,6 @@ export function CategoryList({
           </View>
         ) : null
       }
-      onPress={() => onSelect?.(category)}
       style={[styles.listItem, selectedCategory === category && styles.selectedItem]}
     />
   );

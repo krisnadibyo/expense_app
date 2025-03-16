@@ -32,21 +32,24 @@ export default function CategoriesScreen() {
     }, [])
   );
 
-  const handleCreate = async (value: string) => {
+  const handleCreate = (newCategory: string, _oldCategory?: string) => {
     try {
-      // await categoriesService.createCategory(values);
+      setLoading(true);
+      console.log('Creating category:', newCategory);
+      categoriesService.post(newCategory);
       setModalVisible(false);
       loadCategories();
     } catch (error) {
       console.error('Error creating category:', error);
-      // TODO: Show error toast
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleUpdate = async (values: string) => {
+  const handleUpdate = (newCategory: string, oldCategory: string) => {
     if (!editingCategory) return;
     try {
-      // await categoriesService.updateCategory(editingCategory.id, values);
+      categoriesService.put(oldCategory, newCategory);
       setModalVisible(false);
       setEditingCategory(null);
       loadCategories();
@@ -56,13 +59,14 @@ export default function CategoriesScreen() {
     }
   };
 
-  const handleDelete = async (value: string) => {
+  const handleDelete = (value: string) => {
     try {
-      // await categoriesService.deleteCategory(category.id);
+      categoriesService.delete(value);
       loadCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
-      // TODO: Show error toast
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,7 +93,7 @@ export default function CategoriesScreen() {
           contentContainerStyle={styles.modal}
         >
           <CategoryForm
-            initialValues={editingCategory || undefined}
+            currentCategory={editingCategory || undefined}
             onSubmit={editingCategory ? handleUpdate : handleCreate}
             onCancel={() => {
               setModalVisible(false);

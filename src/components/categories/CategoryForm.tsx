@@ -1,24 +1,23 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, useTheme } from 'react-native-paper';
-import { ColorPicker } from '../common/ColorPicker';
-import { IconPicker } from '../common/IconPicker';
 
 interface CategoryFormProps {
-  initialValues?: string;
-  onSubmit: (values: string) => Promise<void>;
+  currentCategory?: string;
+  onSubmit: (newCategory: string, oldCategory?: string) => void;
   onCancel: () => void;
 }
 
-export function CategoryForm({ initialValues, onSubmit, onCancel }: CategoryFormProps) {
-  const theme = useTheme();
-  const [name, setName] = useState(initialValues || '');
+export function CategoryForm({ currentCategory, onSubmit, onCancel }: CategoryFormProps) {
+  const [newCategory, setNewCategory] = useState(currentCategory || '');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    console.log('Submitting category:', newCategory, currentCategory);
     try {
       setLoading(true);
-      await onSubmit(name);
+      console.log('Submitting category:', newCategory, currentCategory);
+      onSubmit(newCategory, currentCategory);
     } finally {
       setLoading(false);
     }
@@ -28,27 +27,23 @@ export function CategoryForm({ initialValues, onSubmit, onCancel }: CategoryForm
     <View style={styles.container}>
       <TextInput
         label="Category Name"
-        value={name}
-        onChangeText={setName}
+        value={newCategory}
+        onChangeText={setNewCategory}
         style={styles.input}
       />
 
       <View style={styles.buttons}>
-        <Button
-          mode="outlined"
-          onPress={onCancel}
-          style={styles.button}
-        >
+        <Button mode="outlined" onPress={onCancel} style={styles.button}>
           Cancel
         </Button>
         <Button
           mode="contained"
           onPress={handleSubmit}
           loading={loading}
-          disabled={!name || loading}
+          disabled={!newCategory || loading}
           style={styles.button}
         >
-          {initialValues ? 'Update' : 'Create'}
+          {currentCategory ? 'Update' : 'Create'}
         </Button>
       </View>
     </View>
@@ -69,4 +64,4 @@ const styles = StyleSheet.create({
   button: {
     marginLeft: 8,
   },
-}); 
+});
