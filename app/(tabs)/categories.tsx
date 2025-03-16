@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { FAB, Portal, Modal, useTheme } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { CategoryList } from '../../src/components/categories/CategoryList';
@@ -32,13 +32,15 @@ export default function CategoriesScreen() {
     }, [])
   );
 
-  const handleCreate = (newCategory: string, _oldCategory?: string) => {
+  const handleCreate = async (newCategory: string, _oldCategory?: string) => {
     try {
       setLoading(true);
-      console.log('Creating category:', newCategory);
-      categoriesService.post(newCategory);
-      setModalVisible(false);
-      loadCategories();
+      const result = await categoriesService.post(newCategory);
+      if (result) {
+        setModalVisible(false);
+        setEditingCategory(null);
+        loadCategories();
+      }
     } catch (error) {
       console.error('Error creating category:', error);
     } finally {
@@ -46,23 +48,31 @@ export default function CategoriesScreen() {
     }
   };
 
-  const handleUpdate = (newCategory: string, oldCategory: string) => {
+  const handleUpdate = async (newCategory: string, oldCategory: string) => {
     if (!editingCategory) return;
     try {
-      categoriesService.put(oldCategory, newCategory);
-      setModalVisible(false);
-      setEditingCategory(null);
-      loadCategories();
+      setLoading(true);
+      const result = await categoriesService.put(oldCategory, newCategory);
+      if (result) {
+        setModalVisible(false);
+        setEditingCategory(null);
+        loadCategories();
+      }
     } catch (error) {
       console.error('Error updating category:', error);
       // TODO: Show error toast
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDelete = (value: string) => {
+  const handleDelete = async (value: string) => {
     try {
-      categoriesService.delete(value);
-      loadCategories();
+      setLoading(true);
+      const result = await categoriesService.delete(value);
+      if (result) {
+        loadCategories();
+      }
     } catch (error) {
       console.error('Error deleting category:', error);
     } finally {
@@ -82,6 +92,11 @@ export default function CategoriesScreen() {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      )}
 
       <Portal>
         <Modal
@@ -115,6 +130,11 @@ export default function CategoriesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modal: {
     backgroundColor: 'white',

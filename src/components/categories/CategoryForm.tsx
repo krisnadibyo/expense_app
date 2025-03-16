@@ -13,10 +13,8 @@ export function CategoryForm({ currentCategory, onSubmit, onCancel }: CategoryFo
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
-    console.log('Submitting category:', newCategory, currentCategory);
     try {
       setLoading(true);
-      console.log('Submitting category:', newCategory, currentCategory);
       onSubmit(newCategory, currentCategory);
     } finally {
       setLoading(false);

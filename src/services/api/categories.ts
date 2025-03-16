@@ -32,7 +32,7 @@ export const categoriesService = {
     if (!response.ok) {
       throw new Error(payload.detail);
     }
-    return payload;
+    return true;
   },
   async put(oldCategory: string, newCategory: string) {
     const response = await fetch(`${API_URL}/api/v1/categories`, {
@@ -48,7 +48,7 @@ export const categoriesService = {
     if (!response.ok) {
       throw new Error(payload.detail);
     }
-    return payload;
+    return true;
   },
   async delete(category: string) {
     const response = await fetch(`${API_URL}/api/v1/categories`, {
@@ -64,6 +64,6 @@ export const categoriesService = {
     if (!response.ok) {
       throw new Error(payload.detail);
     }
-    return payload;
+    return true;
   },
 };
