@@ -3,7 +3,7 @@ import { authService } from '../services/api/auth';
 import { isEmail } from '../utils/stringUtils';
 import { isPhoneNumber } from '../utils/stringUtils';
 import { LoginResponse } from '../types/auth';
-import { preferences } from '../services/storage/secureStorage';
+import { preferences } from '../services/storage/securestorage';
 
 type AuthContextType = {
   token: string | null;

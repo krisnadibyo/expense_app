@@ -11,8 +11,6 @@ export function useProtectedRoute() {
     if (loading) return;
 
     const isLoginRoute = segments[0] === 'login';
-    console.log(segments);
-    console.log(token);
 
     if (!token && !isLoginRoute) {
       // Redirect to login if user is not authenticated

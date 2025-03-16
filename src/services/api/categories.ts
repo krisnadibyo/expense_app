@@ -1,10 +1,22 @@
-import { Category } from '../../types/category';
+import { API_URL, API_URL_LOCAL } from "../../constants/api";
+import { preferences } from "../storage/securestorage";
 
 // Placeholder for your API implementation
-const api = {
-  async get(endpoint: string) {
-    // TODO: Implement your API GET logic
-    return { data: [] };
+export const categoriesService = {
+  async get(): Promise<string[]> {
+    const response = await fetch(`${API_URL}/api/v1/categories`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await preferences.getValue('token')}`,
+        "ngrok-skip-browser-warning": "69420",
+      },
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.detail);
+    }
+    return payload.names;
   },
   async post(endpoint: string, data: any) {
     // TODO: Implement your API POST logic
@@ -17,26 +29,5 @@ const api = {
   async delete(endpoint: string) {
     // TODO: Implement your API DELETE logic
     return { success: true };
-  },
-};
-
-export const categoriesService = {
-  async getCategories(): Promise<Category[]> {
-    const { data } = await api.get('/categories');
-    return data || [];
-  },
-
-  async createCategory(category: Omit<Category, 'id'>): Promise<Category> {
-    const { data } = await api.post('/categories', category);
-    return data;
-  },
-
-  async updateCategory(category: Category): Promise<Category> {
-    const { data } = await api.put(`/categories/${category.id}`, category);
-    return data;
-  },
-
-  async deleteCategory(id: string): Promise<void> {
-    await api.delete(`/categories/${id}`);
   },
 };

@@ -1,7 +1,8 @@
 import { View, FlatList, StyleSheet } from 'react-native';
 import { List, Text, useTheme } from 'react-native-paper';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { Expense } from '../../types/database';
+import { Expense } from '../../types/expense';
+import { formatCurrency, formatDate } from '../../utils/stringUtils';
 
 interface ExpenseListProps {
   expenses: Expense[];
@@ -10,21 +11,20 @@ interface ExpenseListProps {
   onDelete?: (expense: Expense) => void;
 }
 
-export function ExpenseList({ expenses, onSelect, onEdit, onDelete }: ExpenseListProps) {
+export function ExpenseList({ expenses, onEdit, onDelete }: ExpenseListProps) {
+
+  return (
+    <FlatList
+      data={expenses}
+      renderItem={({ item }) => <ExpenseItem expense={item} onEdit={onEdit} onDelete={onDelete} />}
+      keyExtractor={item => item.id.toString()}
+    />
+  );
+}
+
+const ExpenseItem = ({ expense, onEdit, onDelete }: { expense: Expense, onEdit: (expense: Expense) => void, onDelete: (expense: Expense) => void }) => {
   const theme = useTheme();
-
-  const formatAmount = (amount: number) => {
-    return amount.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    });
-  };
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
-  };
-
-  const renderItem = ({ item: expense }: { item: Expense }) => (
+  return (
     <List.Item
       title={expense.description || 'No description'}
       description={formatDate(expense.date)}
@@ -39,7 +39,10 @@ export function ExpenseList({ expenses, onSelect, onEdit, onDelete }: ExpenseLis
       right={props => (
         <View style={styles.rightContent}>
           <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
-            {formatAmount(expense.amount)}
+            {formatCurrency(expense.amount)}
+          </Text>
+          <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
+            {`${expense.category_name} - ${expense.description}`}
           </Text>
           {onEdit && onDelete && (
             <View style={styles.actions}>
@@ -60,18 +63,9 @@ export function ExpenseList({ expenses, onSelect, onEdit, onDelete }: ExpenseLis
           )}
         </View>
       )}
-      onPress={() => onSelect?.(expense)}
     />
   );
-
-  return (
-    <FlatList
-      data={expenses}
-      renderItem={renderItem}
-      keyExtractor={item => item.id}
-    />
-  );
-}
+};
 
 const styles = StyleSheet.create({
   rightContent: {

@@ -5,19 +5,18 @@ import { useFocusEffect } from '@react-navigation/native';
 import { CategoryList } from '../../src/components/categories/CategoryList';
 import { CategoryForm } from '../../src/components/categories/CategoryForm';
 import { categoriesService } from '../../src/services/api/categories';
-import { Category } from '../../src/types/category';
 
 export default function CategoriesScreen() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const theme = useTheme();
 
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const data = await categoriesService.getCategories();
+      const data = await categoriesService.get();
       setCategories(data);
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -33,7 +32,7 @@ export default function CategoriesScreen() {
     }, [])
   );
 
-  const handleCreate = async (values: Partial<Category>) => {
+  const handleCreate = async (value: string) => {
     try {
       // await categoriesService.createCategory(values);
       setModalVisible(false);
@@ -44,7 +43,7 @@ export default function CategoriesScreen() {
     }
   };
 
-  const handleUpdate = async (values: Partial<Category>) => {
+  const handleUpdate = async (values: string) => {
     if (!editingCategory) return;
     try {
       // await categoriesService.updateCategory(editingCategory.id, values);
@@ -57,7 +56,7 @@ export default function CategoriesScreen() {
     }
   };
 
-  const handleDelete = async (category: Category) => {
+  const handleDelete = async (value: string) => {
     try {
       // await categoriesService.deleteCategory(category.id);
       loadCategories();
@@ -67,18 +66,18 @@ export default function CategoriesScreen() {
     }
   };
 
-  const handleEdit = (category: Category) => {
+  const handleEdit = (category: string) => {
     setEditingCategory(category);
     setModalVisible(true);
   };
 
   return (
     <View style={styles.container}>
-      {/* <CategoryList
+      <CategoryList
         categories={categories}
         onEdit={handleEdit}
         onDelete={handleDelete}
-      /> */}
+      />
 
       <Portal>
         <Modal

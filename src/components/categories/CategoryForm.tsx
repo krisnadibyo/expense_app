@@ -1,27 +1,24 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, useTheme } from 'react-native-paper';
-import { Category } from '../../types/database';
 import { ColorPicker } from '../common/ColorPicker';
 import { IconPicker } from '../common/IconPicker';
 
 interface CategoryFormProps {
-  initialValues?: Partial<Category>;
-  onSubmit: (values: Partial<Category>) => Promise<void>;
+  initialValues?: string;
+  onSubmit: (values: string) => Promise<void>;
   onCancel: () => void;
 }
 
 export function CategoryForm({ initialValues, onSubmit, onCancel }: CategoryFormProps) {
   const theme = useTheme();
-  const [name, setName] = useState(initialValues?.name || '');
-  const [color, setColor] = useState(initialValues?.color || theme.colors.primary);
-  const [icon, setIcon] = useState(initialValues?.icon || 'tag');
+  const [name, setName] = useState(initialValues || '');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await onSubmit({ name, color, icon });
+      await onSubmit(name);
     } finally {
       setLoading(false);
     }
@@ -33,18 +30,6 @@ export function CategoryForm({ initialValues, onSubmit, onCancel }: CategoryForm
         label="Category Name"
         value={name}
         onChangeText={setName}
-        style={styles.input}
-      />
-
-      <ColorPicker
-        selectedColor={color}
-        onSelectColor={setColor}
-        style={styles.input}
-      />
-
-      <IconPicker
-        selectedIcon={icon}
-        onSelectIcon={setIcon}
         style={styles.input}
       />
 

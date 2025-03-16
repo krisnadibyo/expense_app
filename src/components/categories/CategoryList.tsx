@@ -1,14 +1,13 @@
 import { View, FlatList, StyleSheet } from 'react-native';
 import { List, useTheme } from 'react-native-paper';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { Category } from '../../types/database';
 
 interface CategoryListProps {
-  categories: Category[];
-  onSelect?: (category: Category) => void;
-  onEdit?: (category: Category) => void;
-  onDelete?: (category: Category) => void;
-  selectedCategory?: Category | null;
+  categories: string[];
+  onSelect?: (category: string) => void;
+  onEdit?: (category: string) => void;
+  onDelete?: (category: string) => void;
+  selectedCategory?: string | null;
 }
 
 export function CategoryList({
@@ -20,10 +19,10 @@ export function CategoryList({
 }: CategoryListProps) {
   const theme = useTheme();
 
-  const renderItem = ({ item: category }: { item: Category }) => (
+  const renderItem = ({ item: category }: { item: string }) => (
     <List.Item
-      title={category.name}
-      left={(props) => <Icon name={"tag"} size={24} color={category.color} {...props} />}
+      title={category}
+      left={(props) => <Icon name={"tag"} size={24} color={theme.colors.primary} {...props} />}
       right={(props) =>
         onEdit && onDelete ? (
           <View style={styles.actions}>
@@ -44,7 +43,7 @@ export function CategoryList({
         ) : null
       }
       onPress={() => onSelect?.(category)}
-      style={[styles.listItem, selectedCategory?.id === category.id && styles.selectedItem]}
+      style={[styles.listItem, selectedCategory === category && styles.selectedItem]}
     />
   );
 
@@ -52,7 +51,7 @@ export function CategoryList({
     <FlatList
       data={categories}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item}
       contentContainerStyle={styles.listContent}
     />
   );

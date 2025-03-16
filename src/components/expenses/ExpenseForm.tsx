@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { TextInput, Button, useTheme, HelperText, Text } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Category, Expense } from '../../types/database';
 import { CategoryList } from '../categories/CategoryList';
+import { Expense } from '../../types/expense';
 
 interface ExpenseFormProps {
   initialValues?: Partial<Expense>;
-  categories: Category[];
+  categories: string[];
   onSubmit: (values: Partial<Expense>) => Promise<void>;
   onCancel: () => void;
 }
@@ -17,9 +17,7 @@ export function ExpenseForm({ initialValues, categories, onSubmit, onCancel }: E
   const [amount, setAmount] = useState(initialValues?.amount?.toString() || '');
   const [description, setDescription] = useState(initialValues?.description || '');
   const [date, setDate] = useState(new Date(initialValues?.date || new Date()));
-  const [category, setCategory] = useState<Category | null>(
-    categories.find(c => c.id === initialValues?.category_id) || null
-  );
+  const [category, setCategory] = useState<string>(initialValues?.category_name || '');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -45,7 +43,7 @@ export function ExpenseForm({ initialValues, categories, onSubmit, onCancel }: E
         amount: Number(amount),
         description,
         date: date.toISOString().split('T')[0],
-        category_id: category!.id,
+        category_name: category || '',
       });
     } finally {
       setLoading(false);
