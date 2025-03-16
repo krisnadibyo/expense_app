@@ -6,6 +6,7 @@ interface CategoryListProps {
   categories: string[];
   onEdit?: (category: string) => void;
   onDelete?: (category: string) => void;
+  onSelect?: (category: string) => void;
   selectedCategory?: string | null;
 }
 
@@ -13,6 +14,7 @@ export function CategoryList({
   categories,
   onEdit,
   onDelete,
+  onSelect,
   selectedCategory,
 }: CategoryListProps) {
   const theme = useTheme();
@@ -41,6 +43,7 @@ export function CategoryList({
         ) : null
       }
       style={[styles.listItem, selectedCategory === category && styles.selectedItem]}
+      onPress={() => onSelect?.(category)}
     />
   );
 

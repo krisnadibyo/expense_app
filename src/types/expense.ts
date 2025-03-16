@@ -16,7 +16,22 @@ export interface ExpensePerDay {
   amount: number;
 }
 
-export interface ExpenseResponse {
+export interface ExpenseCreate {
+  amount: number;
+  description: string;
+  date: string;
+  category_name: string;
+}
+
+export interface ExpenseUpdate {
+  id: number;
+  amount: number | null;
+  description: string | null;
+  date: string | null;
+  category_name: string | null;
+}
+
+export interface ExpensesResponse {
   start_date: string;
   end_date: string;
   expenses: Expense[];

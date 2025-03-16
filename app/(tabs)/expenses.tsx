@@ -6,9 +6,12 @@ import { Expense } from '../../src/types/expense';
 import { expenseService } from '../../src/services/api/expenses';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
+import { categoriesService } from '../../src/services/api/categories';
 
 export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
@@ -27,8 +30,17 @@ export default function ExpensesScreen() {
   const handleCreate = async (values: Partial<Expense>) => {
     try {
       setError(null);
-      // await expensesService.createExpense(values);
-      setModalVisible(false);
+      const payload = await expenseService.post({
+        amount: values.amount,
+        description: values.description,
+        date: values.date,
+        category_name: values.category_name,
+      });
+      if (payload) {
+        setExpenses([...expenses, payload]);
+        setModalVisible(false);
+        fetchData();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error creating expense:', err);
@@ -39,9 +51,19 @@ export default function ExpensesScreen() {
     if (!editingExpense) return;
     try {
       setError(null);
-      // await expensesService.updateExpense(editingExpense.id, values);
-      setModalVisible(false);
-      setEditingExpense(null);
+      const payload = await expenseService.put({
+        id: editingExpense.id,
+        amount: values.amount,
+        description: values.description,
+        date: values.date,
+        category_name: values.category_name,
+      });
+      if (payload) {  
+        setExpenses(expenses.map(e => e.id === editingExpense.id ? payload : e));
+        setModalVisible(false);
+        setEditingExpense(null);
+        fetchData();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error updating expense:', err);
@@ -51,7 +73,11 @@ export default function ExpensesScreen() {
   const handleDelete = async (expense: Expense) => {
     try {
       setError(null);
-      // await expensesService.deleteExpense(expense.id);
+      const result = await expenseService.delete(expense.id);
+      if (result) {
+        setExpenses(expenses.filter(e => e.id !== expense.id));
+        fetchData();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error deleting expense:', err);
@@ -70,8 +96,10 @@ export default function ExpensesScreen() {
   const fetchData = async () => {
     setLoading(true);
     try {
+      const categories = await categoriesService.get();
       const response = await expenseService.get();
       setExpenses(response.expenses);
+      setCategories(categories);
       setDateStart(response.start_date);
       setDateEnd(response.end_date);
     } catch (err) {
@@ -90,6 +118,27 @@ export default function ExpensesScreen() {
           <Text>{dateStart} - {dateEnd}</Text>
           <ExpenseList expenses={expenses} onEdit={handleEdit} onDelete={handleDelete} />
         </ScrollView>
+
+        <Portal>
+          <Modal
+            visible={modalVisible}
+            onDismiss={() => {
+              setModalVisible(false);
+              setEditingExpense(null);
+            }}
+            contentContainerStyle={styles.modal}
+          >
+            <ExpenseForm
+              initialValues={editingExpense || undefined}
+              onSubmit={editingExpense ? handleUpdate : handleCreate}
+              categories={categories}
+              onCancel={() => {
+                setModalVisible(false);
+                setEditingExpense(null);
+              }}
+            />
+          </Modal>
+      </Portal>
 
         <FAB
           icon="plus"

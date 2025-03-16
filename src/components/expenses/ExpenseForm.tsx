@@ -96,8 +96,8 @@ export function ExpenseForm({ initialValues, categories, onSubmit, onCancel }: E
       <View style={styles.categoryList}>
         <CategoryList
           categories={categories}
-          onSelect={setCategory}
           selectedCategory={category}
+          onSelect={(value) => setCategory(value)}
         />
       </View>
       {errors.category && (
