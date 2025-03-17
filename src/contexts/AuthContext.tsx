@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(token_from_storage);
       }
     };
+    console.log('fetchToken');
     fetchToken();
     setLoading(false);
   }, []);

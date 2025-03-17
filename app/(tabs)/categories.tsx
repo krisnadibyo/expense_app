@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { CategoryList } from '../../src/components/categories/CategoryList';
 import { CategoryForm } from '../../src/components/categories/CategoryForm';
 import { categoriesService } from '../../src/services/api/categories';
+import { useAuth } from '../../src/contexts/AuthContext';
 
 export default function CategoriesScreen() {
   const [categories, setCategories] = useState<string[]>([]);
@@ -12,11 +13,11 @@ export default function CategoriesScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const theme = useTheme();
-
+  const { token } = useAuth();
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const data = await categoriesService.get();
+      const data = await categoriesService.get(token);
       setCategories(data);
     } catch (error) {
     } finally {

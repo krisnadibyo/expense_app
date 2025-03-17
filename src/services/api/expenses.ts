@@ -8,15 +8,15 @@ export const expenseService = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${await preferences.getValue('token')}`,
-        "ngrok-skip-browser-warning": "69420",
-      }
+        Authorization: `Bearer ${await preferences.getValue('token')}`,
+        'ngrok-skip-browser-warning': '69420',
+      },
     });
     if (!response.ok) {
       const payload = await response.json();
       throw new Error(payload.detail);
     }
-    
+
     try {
       const payload = await response.json();
       return payload as ExpensesResponse;
@@ -29,8 +29,8 @@ export const expenseService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${await preferences.getValue('token')}`,
-        "ngrok-skip-browser-warning": "69420",
+        Authorization: `Bearer ${await preferences.getValue('token')}`,
+        'ngrok-skip-browser-warning': '69420',
       },
       body: JSON.stringify(expense),
     });
@@ -45,8 +45,8 @@ export const expenseService = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${await preferences.getValue('token')}`,
-        "ngrok-skip-browser-warning": "69420",
+        Authorization: `Bearer ${await preferences.getValue('token')}`,
+        'ngrok-skip-browser-warning': '69420',
       },
       body: JSON.stringify(expense),
     });
@@ -61,8 +61,8 @@ export const expenseService = {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${await preferences.getValue('token')}`,
-        "ngrok-skip-browser-warning": "69420",
+        Authorization: `Bearer ${await preferences.getValue('token')}`,
+        'ngrok-skip-browser-warning': '69420',
       },
     });
     if (!response.ok) {
@@ -72,4 +72,3 @@ export const expenseService = {
     return true;
   },
 };
-

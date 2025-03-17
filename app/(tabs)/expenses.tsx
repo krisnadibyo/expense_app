@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, SafeAreaView, RefreshControl } from 'react-native';
-import { FAB, Portal, Modal, useTheme, Snackbar, Text, Button } from 'react-native-paper';
+import { useState, useCallback } from 'react';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { FAB, Portal, Modal, useTheme, Snackbar, Text } from 'react-native-paper';
 import { ExpenseList } from '../../src/components/expenses/ExpenseList';
 import { Expense } from '../../src/types/expense';
 import { expenseService } from '../../src/services/api/expenses';
@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
 import { categoriesService } from '../../src/services/api/categories';
+import { useAuth } from '../../src/contexts/AuthContext';
 
 export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -19,7 +20,7 @@ export default function ExpensesScreen() {
   const [dateStart, setDateStart] = useState<string>('');
   const [dateEnd, setDateEnd] = useState<string>('');
   const theme = useTheme();
-
+  const { token } = useAuth();
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -95,7 +96,7 @@ export default function ExpensesScreen() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const categories = await categoriesService.get();
+      const categories = await categoriesService.get(token);
       const response = await expenseService.get();
       setExpenses(response.expenses);
       setCategories(categories);

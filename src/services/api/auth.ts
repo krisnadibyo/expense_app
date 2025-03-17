@@ -2,7 +2,6 @@ import { API_URL } from "../../constants/api";
 import { LoginRequest, LoginResponse, RegisterRequest } from "../../types/auth";
 
 
-
 export const authService = {
   async signIn(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await fetch(`${API_URL}/api/v1/auth/login`, {
