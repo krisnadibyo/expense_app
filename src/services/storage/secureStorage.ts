@@ -1,4 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 export const preferences = {
   async getValue(key: string) {
@@ -24,5 +25,5 @@ export const preferences = {
 };
 
 const isFromWeb = () => {
-  return typeof window !== 'undefined';
+  return Platform.OS === 'web';
 };

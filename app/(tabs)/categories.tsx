@@ -19,8 +19,6 @@ export default function CategoriesScreen() {
       const data = await categoriesService.get();
       setCategories(data);
     } catch (error) {
-      console.error('Error loading categories:', error);
-      // TODO: Show error toast
     } finally {
       setLoading(false);
     }

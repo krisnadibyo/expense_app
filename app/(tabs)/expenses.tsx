@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, SafeAreaView, RefreshControl } from 'react-native';
 import { FAB, Portal, Modal, useTheme, Snackbar, Text, Button } from 'react-native-paper';
 import { ExpenseList } from '../../src/components/expenses/ExpenseList';
 import { Expense } from '../../src/types/expense';
@@ -16,8 +16,8 @@ export default function ExpensesScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [dateStart, setDateStart] = useState<string>("");
-  const [dateEnd, setDateEnd] = useState<string>("");
+  const [dateStart, setDateStart] = useState<string>('');
+  const [dateEnd, setDateEnd] = useState<string>('');
   const theme = useTheme();
 
   useFocusEffect(
@@ -25,7 +25,6 @@ export default function ExpensesScreen() {
       fetchData();
     }, [])
   );
-
 
   const handleCreate = async (values: Partial<Expense>) => {
     try {
@@ -58,8 +57,8 @@ export default function ExpensesScreen() {
         date: values.date,
         category_name: values.category_name,
       });
-      if (payload) {  
-        setExpenses(expenses.map(e => e.id === editingExpense.id ? payload : e));
+      if (payload) {
+        setExpenses(expenses.map((e) => (e.id === editingExpense.id ? payload : e)));
         setModalVisible(false);
         setEditingExpense(null);
         fetchData();
@@ -75,7 +74,7 @@ export default function ExpensesScreen() {
       setError(null);
       const result = await expenseService.delete(expense.id);
       if (result) {
-        setExpenses(expenses.filter(e => e.id !== expense.id));
+        setExpenses(expenses.filter((e) => e.id !== expense.id));
         fetchData();
       }
     } catch (err) {
@@ -111,13 +110,18 @@ export default function ExpensesScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <ScrollView
-          refreshControl={ 
-            <RefreshControl refreshing={loading} onRefresh={fetchData} /> }
-        >
-          <Text style={styles.dateRange}>{dateStart} - {dateEnd}</Text>
-          <ExpenseList expenses={expenses} onEdit={handleEdit} onDelete={handleDelete} />
-        </ScrollView>
+        <View style={styles.container}>
+          <Text style={styles.dateRange}>
+            {dateStart} - {dateEnd}
+          </Text>
+          <ExpenseList
+            expenses={expenses}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            refreshing={loading}
+            onRefresh={fetchData}
+          />
+        </View>
 
         <Portal>
           <Modal
@@ -138,7 +142,7 @@ export default function ExpensesScreen() {
               }}
             />
           </Modal>
-      </Portal>
+        </Portal>
 
         <FAB
           icon="plus"
@@ -155,7 +159,6 @@ export default function ExpensesScreen() {
         >
           {error}
         </Snackbar>
-
       </SafeAreaView>
     </SafeAreaProvider>
   );

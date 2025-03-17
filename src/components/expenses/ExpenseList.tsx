@@ -1,4 +1,4 @@
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { List, Text, useTheme } from 'react-native-paper';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Expense } from '../../types/expense';
@@ -9,34 +9,47 @@ interface ExpenseListProps {
   onSelect?: (expense: Expense) => void;
   onEdit?: (expense: Expense) => void;
   onDelete?: (expense: Expense) => void;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }
 
-export function ExpenseList({ expenses, onEdit, onDelete }: ExpenseListProps) {
-
+export function ExpenseList({
+  expenses,
+  onEdit,
+  onDelete,
+  refreshing,
+  onRefresh,
+}: ExpenseListProps) {
   return (
     <FlatList
       data={expenses}
       renderItem={({ item }) => <ExpenseItem expense={item} onEdit={onEdit} onDelete={onDelete} />}
-      keyExtractor={item => item.id.toString()}
+      keyExtractor={(item) => item.id.toString()}
+      refreshControl={
+        refreshing !== undefined && onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        ) : undefined
+      }
     />
   );
 }
 
-const ExpenseItem = ({ expense, onEdit, onDelete }: { expense: Expense, onEdit: (expense: Expense) => void, onDelete: (expense: Expense) => void }) => {
+const ExpenseItem = ({
+  expense,
+  onEdit,
+  onDelete,
+}: {
+  expense: Expense;
+  onEdit?: (expense: Expense) => void;
+  onDelete?: (expense: Expense) => void;
+}) => {
   const theme = useTheme();
   return (
     <List.Item
       title={expense.description || 'No description'}
       description={formatDate(expense.date)}
-      left={props => (
-        <Icon
-          name={'cash'}
-          size={24}
-          color={theme.colors.primary}
-          {...props}
-        />
-      )}
-      right={props => (
+      left={(props) => <Icon name={'cash'} size={24} color={theme.colors.primary} {...props} />}
+      right={(props) => (
         <View style={styles.rightContent}>
           <Text variant="titleMedium" style={{ color: theme.colors.primary }}>
             {formatCurrency(expense.amount)}
@@ -78,4 +91,4 @@ const styles = StyleSheet.create({
   actionIcon: {
     marginRight: 12,
   },
-}); 
+});
