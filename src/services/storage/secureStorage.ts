@@ -1,5 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
-import { Platform } from 'react-native';
+import { isFromWeb } from '../../utils/deviceUtils';
 
 class SharedPreferences {
   private dict: Record<string, string | null> = {};
@@ -49,7 +49,3 @@ class SharedPreferences {
 };
 
 export const preferences = new SharedPreferences();
-
-const isFromWeb = () => {
-  return Platform.OS === 'web';
-};

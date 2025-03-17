@@ -1,14 +1,13 @@
-import { API_URL } from "../../constants/api";
+import { API_URL, POST } from "../../constants/api";
 import { LoginRequest, LoginResponse, RegisterRequest } from "../../types/auth";
+import { headers } from "./headers";
 
 
 export const authService = {
   async signIn(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await fetch(`${API_URL}/api/v1/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      method: POST,
+      headers: headers(),
       body: JSON.stringify(credentials),
     });
     const payload = await response.json();
@@ -19,10 +18,8 @@ export const authService = {
   },
   async signUp(request: RegisterRequest) {
     const response = await fetch(`${API_URL}/api/v1/auth/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      method: POST,
+      headers: headers(),
       body: JSON.stringify({
         email: request.email,
         password: request.password,

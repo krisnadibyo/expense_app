@@ -8,7 +8,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
 import { categoriesService } from '../../src/services/api/categories';
-import { useAuth } from '../../src/contexts/AuthContext';
 
 export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -20,7 +19,7 @@ export default function ExpensesScreen() {
   const [dateStart, setDateStart] = useState<string>('');
   const [dateEnd, setDateEnd] = useState<string>('');
   const theme = useTheme();
-  const { token } = useAuth();
+
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -96,7 +95,7 @@ export default function ExpensesScreen() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const categories = await categoriesService.get(token);
+      const categories = await categoriesService.get();
       const response = await expenseService.get();
       setExpenses(response.expenses);
       setCategories(categories);

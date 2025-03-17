@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useRouter, useSegments } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
+import { preferences } from '../services/storage/securestorage';
 
 export function useProtectedRoute() {
-  const {  token, loading } = useAuth();
+  const { token, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 

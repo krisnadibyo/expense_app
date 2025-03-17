@@ -1,10 +1,11 @@
+
 import { View } from 'react-native';
-import { useAuth } from '../../src/contexts/AuthContext';
+import { Text } from 'react-native-paper';
 
 export default function DashboardScreen() {
-  const { token } = useAuth();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text variant="headlineMedium">Dashboard</Text>
     </View>
   );  
 } 

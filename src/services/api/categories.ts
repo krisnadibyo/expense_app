@@ -1,16 +1,13 @@
-import { API_URL } from '../../constants/api';
-import { preferences } from '../storage/securestorage';
+import { API_URL, DELETE, GET, POST, PUT } from '../../constants/api';
+import { headersWithToken } from './headers';
+
 
 // Placeholder for your API implementation
 export const categoriesService = {
-  async get(token: string): Promise<string[]> {
+  async get(): Promise<string[]> {
     const response = await fetch(`${API_URL}/api/v1/categories`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
-      },
+      method: GET,
+      headers: await headersWithToken(),
     });
     const payload = await response.json();
     if (!response.ok) {
@@ -20,12 +17,8 @@ export const categoriesService = {
   },
   async post(newCategory: string) {
     const response = await fetch(`${API_URL}/api/v1/categories`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${await preferences.getValue('token')}`,
-        'ngrok-skip-browser-warning': '69420',
-      },
+      method: POST,
+      headers: await headersWithToken(),
       body: JSON.stringify({ name: newCategory }),
     });
     const payload = await response.json();
@@ -36,12 +29,8 @@ export const categoriesService = {
   },
   async put(oldCategory: string, newCategory: string) {
     const response = await fetch(`${API_URL}/api/v1/categories`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${await preferences.getValue('token')}`,
-        'ngrok-skip-browser-warning': '69420',
-      },
+      method: PUT,
+      headers: await headersWithToken(),
       body: JSON.stringify({ name: oldCategory, new_name: newCategory }),
     });
     const payload = await response.json();
@@ -52,12 +41,8 @@ export const categoriesService = {
   },
   async delete(category: string) {
     const response = await fetch(`${API_URL}/api/v1/categories`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${await preferences.getValue('token')}`,
-        'ngrok-skip-browser-warning': '69420',
-      },
+      method: DELETE,
+      headers: await headersWithToken(),
       body: JSON.stringify({ name: category }),
     });
     const payload = await response.json();
