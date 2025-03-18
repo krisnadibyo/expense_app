@@ -46,7 +46,7 @@ export default function DashboardScreen() {
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
-    } 
+    }
   };
 
   const onChangeSearch = (query: string) => setSearchQuery(query);
@@ -130,29 +130,6 @@ export default function DashboardScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header with profile */}
-      <View style={styles.header}>
-        <View style={styles.profileContainer}>
-          <Avatar.Image
-            size={40}
-            source={{ uri: 'https://randomuser.me/api/portraits/men/32.jpg' }}
-          />
-          <Text style={styles.headerTitle}>Home</Text>
-        </View>
-        <View style={styles.headerIcons}>
-          <IconButton icon="chart-bar" size={24} />
-          <IconButton icon="bell-outline" size={24} />
-        </View>
-      </View>
-
-      {/* Search bar */}
-      <Searchbar
-        placeholder="Search"
-        onChangeText={onChangeSearch}
-        value={searchQuery}
-        style={styles.searchBar}
-        iconColor="#888"
-      />
 
       {/* Category tabs */}
       {renderTabs()}
@@ -193,7 +170,6 @@ export default function DashboardScreen() {
           <Text style={styles.noTransactions}>No transactions found</Text>
         )}
       </View>
-
     </ScrollView>
   );
 }
