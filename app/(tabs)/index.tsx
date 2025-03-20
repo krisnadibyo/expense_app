@@ -2,12 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import {
   Text,
-  Searchbar,
   Avatar,
   Card,
-  Divider,
   ActivityIndicator,
-  Button,
   IconButton,
 } from 'react-native-paper';
 import { expenseService } from '../../src/services/api/expenses';
@@ -21,7 +18,6 @@ export default function DashboardScreen() {
   const [expenseData, setExpenseData] = useState<ExpensesResponse | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('Total');
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchExpenseData();
@@ -49,7 +45,6 @@ export default function DashboardScreen() {
     }
   };
 
-  const onChangeSearch = (query: string) => setSearchQuery(query);
 
   const formatAmount = (amount: number) => {
     return `Rp${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
@@ -77,27 +72,7 @@ export default function DashboardScreen() {
     );
   };
 
-  const renderActionButtons = () => {
-    const actions = [
-      { icon: 'plus', label: 'Add money' },
-      { icon: 'swap-horizontal', label: 'Exchange' },
-      { icon: 'information-outline', label: 'Details' },
-      { icon: 'dots-horizontal', label: 'More' },
-    ];
-
-    return (
-      <View style={styles.actionButtonsContainer}>
-        {actions.map((action) => (
-          <TouchableOpacity key={action.label} style={styles.actionButton}>
-            <View style={styles.actionIconContainer}>
-              <MaterialCommunityIcons name={action.icon as any} size={24} color="#4285F4" />
-            </View>
-            <Text style={styles.actionLabel}>{action.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
+  
 
   const renderTransactionItem = (expense: Expense) => {
     // Generate initials for the avatar
@@ -144,11 +119,7 @@ export default function DashboardScreen() {
               </Text>
               <Text style={styles.balanceCurrency}>Total Expenses</Text>
             </View>
-            <IconButton icon="chevron-down" size={24} style={styles.balanceDropdown} />
           </View>
-
-          {/* Action buttons */}
-          {renderActionButtons()}
         </Card.Content>
       </Card>
 
