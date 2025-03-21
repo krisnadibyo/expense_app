@@ -12,6 +12,7 @@ import { ExpensesResponse, Expense } from '../../src/types/expense';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { formatDate } from '../../src/utils/dateUtils';
 import { categoriesService } from '../../src/services/api/categories';
+import { router } from 'expo-router';
 
 export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
@@ -85,12 +86,11 @@ export default function DashboardScreen() {
           <View style={styles.transactionDetails}>
             <Text style={styles.transactionTitle}>{expense.description}</Text>
             <Text style={styles.transactionDate}>
-              {formatDate(expense.date)}{' '}
-              <MaterialCommunityIcons name="clock-outline" size={14} color="#888" />
+              {formatDate(expense.date)}
             </Text>
           </View>
         </View>
-        <Text style={styles.transactionAmount}>-{formatAmount(expense.amount)}</Text>
+        <Text style={styles.transactionAmount}>{formatAmount(expense.amount)}</Text>
       </View>
     );
   };
@@ -115,7 +115,7 @@ export default function DashboardScreen() {
           <View style={styles.balanceHeader}>
             <View>
               <Text style={styles.balanceAmount}>
-                ${expenseData?.total_amount.toFixed(2) || '0.00'}
+                {formatAmount(expenseData?.total_amount) || '0.00'}
               </Text>
               <Text style={styles.balanceCurrency}>Total Expenses</Text>
             </View>
@@ -133,7 +133,7 @@ export default function DashboardScreen() {
         {expenseData && expenseData.expenses.length > 0 ? (
           <>
             {expenseData.expenses.slice(0, 5).map(renderTransactionItem)}
-            <TouchableOpacity style={styles.seeAllButton}>
+            <TouchableOpacity style={styles.seeAllButton} onPress={() => router.push('/expenses')}>
               <Text style={styles.seeAllText}>See all</Text>
             </TouchableOpacity>
           </>

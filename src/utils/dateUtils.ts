@@ -44,7 +44,7 @@ export const formatDate = (dateString: string): string => {
     };
     const formattedTime = date.toLocaleTimeString('en-US', timeOptions);
 
-    return `${formattedDate}, ${formattedTime}`;
+    return `${formattedDate}`;
   } catch (error) {
     console.error('Error formatting date:', error);
     return dateString; // Return the original string if there's an error
