@@ -9,7 +9,6 @@ import {
 } from 'react-native-paper';
 import { expenseService } from '../../src/services/api/expenses';
 import { ExpensesResponse, Expense } from '../../src/types/expense';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { formatDate } from '../../src/utils/dateUtils';
 import { categoriesService } from '../../src/services/api/categories';
 import { router } from 'expo-router';
@@ -19,6 +18,7 @@ export default function DashboardScreen() {
   const [expenseData, setExpenseData] = useState<ExpensesResponse | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('Total');
+  const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     fetchExpenseData();
@@ -30,6 +30,7 @@ export default function DashboardScreen() {
       setLoading(true);
       const data = await expenseService.get('month');
       setExpenseData(data);
+      setTotalAmount(data.total_amount);
     } catch (error) {
       console.error('Error fetching expense data:', error);
     } finally {
@@ -43,6 +44,18 @@ export default function DashboardScreen() {
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+    }
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === 'Total') {
+      setTotalAmount(expenseData?.total_amount || 0);
+    } else {
+      const categoryExpenses = expenseData?.expenses_per_category.find(
+        (expense) => expense.category_name === tab
+      );
+      setTotalAmount(categoryExpenses?.amount || 0);
     }
   };
 
@@ -64,7 +77,7 @@ export default function DashboardScreen() {
           <TouchableOpacity
             key={tab}
             style={[styles.tabButton, activeTab === tab && styles.activeTabButton]}
-            onPress={() => setActiveTab(tab)}
+            onPress={() => handleTabChange(tab)}
           >
             <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>{tab}</Text>
           </TouchableOpacity>
@@ -115,7 +128,7 @@ export default function DashboardScreen() {
           <View style={styles.balanceHeader}>
             <View>
               <Text style={styles.balanceAmount}>
-                {formatAmount(expenseData?.total_amount) || '0.00'}
+                {formatAmount(totalAmount)}
               </Text>
               <Text style={styles.balanceCurrency}>Total Expenses</Text>
             </View>
