@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { View, StyleSheet, SafeAreaView } from 'react-native';
-import { FAB, Portal, Modal, useTheme, Snackbar, Text } from 'react-native-paper';
+import { FAB, Portal, Modal, useTheme, Snackbar, Text, Card, Chip } from 'react-native-paper';
 import { ExpenseList } from '../../src/components/expenses/ExpenseList';
 import { Expense } from '../../src/types/expense';
 import { expenseService } from '../../src/services/api/expenses';
@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
 import { categoriesService } from '../../src/services/api/categories';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -18,6 +19,7 @@ export default function ExpensesScreen() {
   const [error, setError] = useState<string | null>(null);
   const [dateStart, setDateStart] = useState<string>('');
   const [dateEnd, setDateEnd] = useState<string>('');
+  const [totalAmount, setTotalAmount] = useState<number>(0);
   const theme = useTheme();
 
   useFocusEffect(
@@ -101,26 +103,54 @@ export default function ExpensesScreen() {
       setCategories(categories);
       setDateStart(response.start_date);
       setDateEnd(response.end_date);
+      setTotalAmount(response.total_amount);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     }
     setLoading(false);
   };
 
+  const formatCurrency = (amount: number) => {
+    return `Rp${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          <Text style={styles.dateRange}>
-            {dateStart} - {dateEnd}
-          </Text>
-          <ExpenseList
-            expenses={expenses}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            refreshing={loading}
-            onRefresh={fetchData}
-          />
+          {/* Summary Card */}
+          <Card style={styles.summaryCard}>
+            <Card.Content>
+              <View style={styles.dateRangeContainer}>
+                <Chip icon="calendar" style={styles.dateChip} textStyle={styles.dateChipText}>
+                  {dateStart} - {dateEnd}
+                </Chip>
+                <MaterialCommunityIcons
+                  name="refresh"
+                  size={20}
+                  color={theme.colors.primary}
+                  style={styles.refreshIcon}
+                  onPress={fetchData}
+                />
+              </View>
+
+              <View style={styles.summaryAmount}>
+                <Text style={styles.totalLabel}>Total Expenses</Text>
+                <Text style={styles.totalAmount}>{formatCurrency(totalAmount)}</Text>
+              </View>
+            </Card.Content>
+          </Card>
+
+          {/* Expenses List */}
+          <View style={styles.listContainer}>
+            <ExpenseList
+              expenses={expenses}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              refreshing={loading}
+              onRefresh={fetchData}
+            />
+          </View>
         </View>
 
         <Portal>
@@ -148,6 +178,7 @@ export default function ExpensesScreen() {
           icon="plus"
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           onPress={() => setModalVisible(true)}
+          color="white"
         />
         <Snackbar
           visible={!!error}
@@ -167,13 +198,45 @@ export default function ExpensesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
-  dateRange: {
-    fontSize: 16,
+  summaryCard: {
+    backgroundColor: '#ffffff',
+    margin: 16,
+    marginBottom: 8,
+    borderRadius: 12,
+    elevation: 2,
+  },
+  dateRangeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dateChip: {
+    height: 32,
+  },
+  dateChipText: {
+    fontSize: 12,
+  },
+  refreshIcon: {
+    padding: 8,
+  },
+  summaryAmount: {
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  totalLabel: {
+    fontSize: 14,
+    opacity: 0.7,
+  },
+  totalAmount: {
+    fontSize: 28,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 16,
-    marginBottom: 16,
+    marginTop: 4,
+  },
+  listContainer: {
+    flex: 1,
+    marginTop: 8,
   },
   centerContainer: {
     flex: 1,
@@ -192,12 +255,14 @@ const styles = StyleSheet.create({
   modal: {
     backgroundColor: 'white',
     margin: 20,
-    borderRadius: 8,
+    borderRadius: 12,
+    padding: 20,
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 0,
+    borderRadius: 28,
   },
 });
