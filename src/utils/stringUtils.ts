@@ -8,11 +8,9 @@ export const isEmail = (email: string) => {
 }
 
 export const formatCurrency = (amount: number) => {
-  return amount.toLocaleString('IDR', {
-    style: 'currency',
-    currency: 'IDR',
-  });
-}
+  return `Rp${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+};
+
 
 export const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString();

@@ -12,6 +12,7 @@ import { ExpensesResponse, Expense } from '../../src/types/expense';
 import { formatDate } from '../../src/utils/dateUtils';
 import { categoriesService } from '../../src/services/api/categories';
 import { router } from 'expo-router';
+import { formatCurrency } from '../../src/utils/stringUtils';
 
 export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
@@ -59,11 +60,6 @@ export default function DashboardScreen() {
     }
   };
 
-
-  const formatAmount = (amount: number) => {
-    return `Rp${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
-  };
-
   const renderTabs = () => {
     const tabs = ['Total', ...categories];
 
@@ -103,7 +99,7 @@ export default function DashboardScreen() {
             </Text>
           </View>
         </View>
-        <Text style={styles.transactionAmount}>{formatAmount(expense.amount)}</Text>
+        <Text style={styles.transactionAmount}>{formatCurrency(expense.amount)}</Text>
       </View>
     );
   };
@@ -128,7 +124,7 @@ export default function DashboardScreen() {
           <View style={styles.balanceHeader}>
             <View>
               <Text style={styles.balanceAmount}>
-                {formatAmount(totalAmount)}
+                {formatCurrency(totalAmount)}
               </Text>
               <Text style={styles.balanceCurrency}>Total Expenses</Text>
             </View>

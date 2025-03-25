@@ -9,6 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
 import { categoriesService } from '../../src/services/api/categories';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { formatCurrency } from '../../src/utils/stringUtils';
 
 export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -110,10 +111,6 @@ export default function ExpensesScreen() {
     setLoading(false);
   };
 
-  const formatCurrency = (amount: number) => {
-    return `Rp${amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
-  };
-
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -201,7 +198,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   summaryCard: {
-    backgroundColor: '#ffffff',
     margin: 16,
     marginBottom: 8,
     borderRadius: 12,
