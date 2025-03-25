@@ -141,7 +141,7 @@ export default function DashboardScreen() {
 
         {expenseData && expenseData.expenses.length > 0 ? (
           <>
-            {expenseData.expenses.slice(0, 5).map(renderTransactionItem)}
+            {expenseData.expenses.slice(0, 10).filter((expense) => activeTab === 'Total' ? true : expense.category_name === activeTab).map(renderTransactionItem)}
             <TouchableOpacity style={styles.seeAllButton} onPress={() => router.push('/expenses')}>
               <Text style={styles.seeAllText}>See all</Text>
             </TouchableOpacity>
