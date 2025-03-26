@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet, SafeAreaView } from 'react-native';
 import { FAB, Portal, Modal, useTheme, Snackbar, Text, Card, Chip, Button } from 'react-native-paper';
 import { ExpenseList } from '../../src/components/expenses/ExpenseList';
@@ -23,9 +23,7 @@ export default function ExpensesScreen() {
   const [dateEnd, setDateEnd] = useState<string>('');
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [datePickerVisible, setDatePickerVisible] = useState(false);
-  const [customStartDate, setCustomStartDate] = useState<Date>(new Date());
-  const [customEndDate, setCustomEndDate] = useState<Date>(new Date());
-
+  
   const theme = useTheme();
 
   useFocusEffect(
@@ -102,10 +100,11 @@ export default function ExpensesScreen() {
 
   const handleSubmitDate = () => {
     setDatePickerVisible(false);
-    setDateStart(customStartDate.toISOString().split('T')[0]);
-    setDateEnd(customEndDate.toISOString().split('T')[0]);
-    fetchData();
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [dateStart, dateEnd]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -192,26 +191,26 @@ export default function ExpensesScreen() {
           >
             <View style={styles.datePickerContainer}>
               <DatePicker
-                  label="Start Date"
-                  value={customStartDate}
+                label="Start Date"
+                value={dateStart}
                 onChange={(date) => {
-                  setCustomStartDate(date);
+                  setDateStart(date);
                 }}
                 showPicker={datePickerVisible}
                 onTogglePicker={() => setDatePickerVisible(!datePickerVisible)}
               />
               <DatePicker
                 label="End Date"
-                value={customEndDate}
+                value={dateEnd}
                 onChange={(date) => {
-                  setCustomEndDate(date);
+                  setDateEnd(date);
                 }}
                 showPicker={datePickerVisible}
                 onTogglePicker={() => setDatePickerVisible(!datePickerVisible)}
               />
             </View>
               
-            <Button mode="contained" style={styles.dateSubmitButton} onPress={handleSubmitDate}>Apply</Button>
+            <Button mode="contained" style={styles.dateSubmitButton} onPress={handleSubmitDate}>Done</Button>
           </Modal>
         </Portal>
 

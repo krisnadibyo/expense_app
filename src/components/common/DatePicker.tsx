@@ -5,8 +5,8 @@ import NativeDateTimePicker from '@react-native-community/datetimepicker';
 
 interface DatePickerProps {
   label?: string;
-  value: Date;
-  onChange: (date: Date) => void;
+  value: string;
+  onChange: (date: string) => void;
   showPicker: boolean;
   onTogglePicker: () => void;
 }
@@ -25,10 +25,10 @@ export function DatePicker({ label,value, onChange, showPicker, onTogglePicker }
           <label style={{ color: 'black', fontStyle: 'bold', fontSize: 14, marginBottom: 4, display: 'block' }}>{label}</label>
           <input
             type="date"
-            value={formatDateForWeb(value)}
+            value={value}
             onChange={(e) => {
               if (e.target.value) {
-                onChange(new Date(e.target.value));
+                onChange(e.target.value)
               }
             }}
             style={{
@@ -47,17 +47,17 @@ export function DatePicker({ label,value, onChange, showPicker, onTogglePicker }
     return (
       <View>
         <Button mode="outlined" onPress={onTogglePicker}>
-          {value.toLocaleDateString()}
+          {value}
         </Button>
 
         {showPicker && (
           <NativeDateTimePicker
-            value={value}
+            value={new Date(value)}
             mode="date"
             onChange={(event, selectedDate) => {
               onTogglePicker();
               if (selectedDate) {
-                onChange(selectedDate);
+                onChange(selectedDate.toISOString().split("T")[0]);
               }
             }}
           />
