@@ -4,13 +4,14 @@ import { Button } from 'react-native-paper';
 import NativeDateTimePicker from '@react-native-community/datetimepicker';
 
 interface DatePickerProps {
+  label?: string;
   value: Date;
   onChange: (date: Date) => void;
   showPicker: boolean;
   onTogglePicker: () => void;
 }
 
-export function DatePicker({ value, onChange, showPicker, onTogglePicker }: DatePickerProps) {
+export function DatePicker({ label,value, onChange, showPicker, onTogglePicker }: DatePickerProps) {
   // Format date as YYYY-MM-DD for web input
   const formatDateForWeb = (date: Date) => {
     return date.toISOString().split('T')[0];
@@ -21,7 +22,7 @@ export function DatePicker({ value, onChange, showPicker, onTogglePicker }: Date
     return (
       <View>
         <div style={{ marginBottom: 8 }}>
-          <label style={{ fontSize: 14, marginBottom: 4, display: 'block' }}>Date</label>
+          <label style={{ color: 'black', fontStyle: 'bold', fontSize: 14, marginBottom: 4, display: 'block' }}>{label}</label>
           <input
             type="date"
             value={formatDateForWeb(value)}

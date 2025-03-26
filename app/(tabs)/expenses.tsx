@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { View, StyleSheet, SafeAreaView } from 'react-native';
-import { FAB, Portal, Modal, useTheme, Snackbar, Text, Card, Chip } from 'react-native-paper';
+import { FAB, Portal, Modal, useTheme, Snackbar, Text, Card, Chip, Button } from 'react-native-paper';
 import { ExpenseList } from '../../src/components/expenses/ExpenseList';
 import { Expense } from '../../src/types/expense';
 import { expenseService } from '../../src/services/api/expenses';
@@ -10,6 +10,7 @@ import { ExpenseForm } from '../../src/components/expenses/ExpenseForm';
 import { categoriesService } from '../../src/services/api/categories';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { formatCurrency } from '../../src/utils/stringUtils';
+import { DatePicker } from '../../src/components/common/DatePicker';
 
 export default function ExpensesScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -21,6 +22,10 @@ export default function ExpensesScreen() {
   const [dateStart, setDateStart] = useState<string>('');
   const [dateEnd, setDateEnd] = useState<string>('');
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState<Date>(new Date());
+  const [customEndDate, setCustomEndDate] = useState<Date>(new Date());
+
   const theme = useTheme();
 
   useFocusEffect(
@@ -95,11 +100,18 @@ export default function ExpensesScreen() {
     setError(null);
   };
 
+  const handleSubmitDate = () => {
+    setDatePickerVisible(false);
+    setDateStart(customStartDate.toISOString().split('T')[0]);
+    setDateEnd(customEndDate.toISOString().split('T')[0]);
+    fetchData();
+  };
+
   const fetchData = async () => {
     setLoading(true);
     try {
       const categories = await categoriesService.get();
-      const response = await expenseService.get();
+      const response = await expenseService.get(dateStart, dateEnd);
       setExpenses(response.expenses);
       setCategories(categories);
       setDateStart(response.start_date);
@@ -119,7 +131,7 @@ export default function ExpensesScreen() {
           <Card style={styles.summaryCard}>
             <Card.Content>
               <View style={styles.dateRangeContainer}>
-                <Chip icon="calendar" style={styles.dateChip} textStyle={styles.dateChipText}>
+                <Chip icon="calendar" style={styles.dateChip} textStyle={styles.dateChipText} onPress={() => setDatePickerVisible(true)}>
                   {dateStart} - {dateEnd}
                 </Chip>
                 <MaterialCommunityIcons
@@ -168,6 +180,38 @@ export default function ExpensesScreen() {
                 setEditingExpense(null);
               }}
             />
+          </Modal>
+        </Portal>
+        <Portal>
+          <Modal
+            visible={datePickerVisible}
+            onDismiss={() => {
+              setDatePickerVisible(false);
+            }}
+            contentContainerStyle={styles.modal}
+          >
+            <View style={styles.datePickerContainer}>
+              <DatePicker
+                  label="Start Date"
+                  value={customStartDate}
+                onChange={(date) => {
+                  setCustomStartDate(date);
+                }}
+                showPicker={datePickerVisible}
+                onTogglePicker={() => setDatePickerVisible(!datePickerVisible)}
+              />
+              <DatePicker
+                label="End Date"
+                value={customEndDate}
+                onChange={(date) => {
+                  setCustomEndDate(date);
+                }}
+                showPicker={datePickerVisible}
+                onTogglePicker={() => setDatePickerVisible(!datePickerVisible)}
+              />
+            </View>
+              
+            <Button mode="contained" style={styles.dateSubmitButton} onPress={handleSubmitDate}>Apply</Button>
           </Modal>
         </Portal>
 
@@ -248,7 +292,20 @@ const styles = StyleSheet.create({
   retryButton: {
     marginTop: 8,
   },
+  datePickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: 16,
+    width: '100%',
+  },
+  dateSubmitButton: {
+    width: '100%',
+    maxWidth: 144,
+  },
   modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
     margin: 20,
     borderRadius: 12,
